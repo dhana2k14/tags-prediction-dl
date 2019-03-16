@@ -6,16 +6,20 @@ from keras.preprocessing import sequence
 
 null_class = 'O'
 len_word_vectors = 60
-len_named_class = 5
+len_named_class = 8
 nlp = spacy.load('en_core_web_sm')
 
 tags = []
 tags_map = {}
 tags_one_hot_map = {}
 
+def process_tag(tags):
+    """ return a processed tags """
+    return tags[2:]
+
 def get_word_vector(word):
     """ returns a vector of a word using GloVe model"""
-    s = nlp(str(word))
+    s = nlp(word)
     return s.vector
 
 def read_data(datapath):
@@ -32,7 +36,6 @@ def read_data(datapath):
         for l in f:
             line = l.strip().split()
             if line:
-                print(line)
                 word, named_tags = line[0], line[1]
                 if named_tags != null_class:
                     named_tags = process_tag(named_tags)
@@ -42,6 +45,7 @@ def read_data(datapath):
                     tags_map[_id] = named_tags
                     one_hot_vec = np.zeros(len_named_class, dtype = np.int32)
                     one_hot_vec[_id] = 1
+                    print(one_hot_vec)
                     tags_one_hot_map[named_tags] = one_hot_vec
                     
                     _id += 1
@@ -60,7 +64,7 @@ def read_data(datapath):
     for pair in all_data:
         if max_len < len(pair[0]):
             max_len = len(pair[0])
-            print(len(pair[0]), max_len)
+#            print(len(pair[0]), max_len)
                     
     for vectors, one_hot_tags in all_data:
         temp_x = np.zeros(len_word_vectors, dtype = np.int32) 
@@ -73,16 +77,12 @@ def read_data(datapath):
     X, Y = np.array(x), np.array(y)
     return X, Y, max_len
 
-x, y, maxLen = read_data("../data/sample_text_manual.txt")
+x, y, maxLen = read_data("./data/sample_text_manual.txt")
      
 def encode_sentence(sentence):
     vectors = get_score_sentence(sentence)
     vectors = [v[:len_word_vectors] for v in vectors]
-    return sequence.pad_sequences([vectors], maxlen = 13, dtype = np.float32)
-
-def process_tag(tags):
-    """ return a processed tags """
-    return tags[2:]
+    return sequence.pad_sequences([vectors], maxlen = maxLen, dtype = np.float32)
 
 def get_score_sentence(sentence):
     """returns a vectors for a sentence as list"""

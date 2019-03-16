@@ -37,7 +37,7 @@ train_x, test_x, train_y, test_y = train_test_split(x, y, test_size = 0.33, rand
 
 model = Sequential()
 model.add(LSTM(150, return_sequences = True, input_shape = (train_x.shape[1], train_x.shape[2])))
-model.add(Dense(5, activation = 'softmax'))
+model.add(Dense(8, activation = 'softmax'))
 model.add(Dropout(0.2))
 model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
 print(model.summary())
@@ -88,6 +88,7 @@ def return_predicted_tags(sentence):
     sent_list = sentence.strip().split()
     len_sent = len(sent_list)
     vec = encode_sentence(sentence)
+    print(vec.shape)
     tags = model.predict(vec)
     tags = tags[-len_sent:]
     tags_pred_sent = decode_result(tags)
@@ -97,7 +98,10 @@ def return_predicted_tags(sentence):
         
 sentence = """
     
-Fencing Work Perimeter of Fencing 75x75mm & 10 Gauge GI Chain Link
+place concrete any pcc 1 4 8 below GL charge special contract includes material 
+labour tool p&m providing and laying position cement concrete specified grade 
+excluding the cost centering and shuttering all upto plinth level 1 cement 4 
+coars sand 8 grade stone aggregate 40 mm nominal size
     
     """    
 return_predicted_tags(sentence)
