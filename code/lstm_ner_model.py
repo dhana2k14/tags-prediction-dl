@@ -16,18 +16,18 @@ from sklearn.model_selection import train_test_split
 
 # train-test split
 
-def train_test(x, y, train_split = 0.8):
-    rand = np.random.rand(len(x))
-    split =  rand < (train_split)
-    train_x = x[split]
-    train_y = y[split]
-    test_x = x[~split]
-    test_y = y[~split]
-    print(rand)
-    print(train_x.shape, train_y.shape, test_x.shape, test_y.shape)
-    return train_x, train_y, test_x, test_y
-    
-train_x, train_y, test_x, test_y = train_test(x, y, train_split = 0.8)
+#def train_test(x, y, train_split = 0.8):
+#    rand = np.random.rand(len(x))
+#    split =  rand < (train_split)
+#    train_x = x[split]
+#    train_y = y[split]
+#    test_x = x[~split]
+#    test_y = y[~split]
+#    print(rand)
+#    print(train_x.shape, train_y.shape, test_x.shape, test_y.shape)
+#    return train_x, train_y, test_x, test_y
+#    
+#train_x, train_y, test_x, test_y = train_test(x, y, train_split = 0.8)
 
 # method -2
 
@@ -36,7 +36,7 @@ train_x, test_x, train_y, test_y = train_test_split(x, y, test_size = 0.33, rand
 # LSTM model 
 
 model = Sequential()
-model.add(LSTM(150, return_sequences = True, input_shape = (train_x.shape[1], train_x.shape[2])))
+model.add(Bidirectional(LSTM(150, return_sequences = True), input_shape = (train_x.shape[1], train_x.shape[2])))
 model.add(Dense(8, activation = 'softmax'))
 model.add(Dropout(0.2))
 model.compile(loss = 'categorical_crossentropy', optimizer = 'adam', metrics = ['accuracy'])
